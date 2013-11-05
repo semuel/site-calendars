@@ -1,0 +1,14 @@
+name: iCal Manager
+id: icalmanager
+key: icalmanager
+author_link: http://www.shmuelfomberg.com/
+author_name: Shmuel Fomberg
+description: Managing iCals
+version: 0.01
+plugin_link: http://www.shmuelfomberg.com/
+l10n_class: ICalManager::L10N
+
+schema_version: 0.01
+object_types:
+    mls_groups: ICalManager::Calendar
+
