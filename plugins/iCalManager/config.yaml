@@ -10,5 +10,13 @@ l10n_class: ICalManager::L10N
 
 schema_version: 0.01
 object_types:
-    mls_groups: ICalManager::Calendar
+    ical_cal: ICalManager::Calendar
+    author:
+        groups: meta array
+
+tasks:
+    UpdateCalendars:
+        label: Update all calendars
+        frequency: 3600
+        code: $icalmanager::ICalManager::Updater::update_all_cals
 
