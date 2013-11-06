@@ -11,7 +11,8 @@ __PACKAGE__->install_properties ({
         'url'               => 'string(255) not null',
         'name'              => 'string(255) not null',
         'is_active'         => 'boolean not null',
-        'last_update'       => 'datetime',
+        'last_update'       => 'string(255)', # as got from the website
+        'last_status'       => 'string(255)',
         'last_query'        => 'datetime',
         'group_id'          => 'integer not null',
     },
