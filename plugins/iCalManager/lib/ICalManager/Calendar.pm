@@ -24,4 +24,15 @@ __PACKAGE__->install_properties ({
     class_type  => 'ical_cal',
 });
 
+sub cal_file {
+    my ($self, $mt, $plugin) = @_;
+    require File::Spec;
+    my $user_dir = File::Spec->catdir( $mt->static_file_path, 'calendars', $self->author_id );
+    if (not -d $user_dir) {
+        require File::Path;
+        File::Path::make_path($user_dir);
+    }
+    return File::Spec->catdir( $user_dir, $self->id) . ".ics";
+}
+
 1;
