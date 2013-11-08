@@ -8,11 +8,15 @@ version: 0.01
 plugin_link: http://www.shmuelfomberg.com/
 l10n_class: ICalManager::L10N
 
-schema_version: 0.01
-object_types:
-    ical_cal: ICalManager::Calendar
-    author:
-        groups: meta array
+# schema_version: 0.01
+# object_types:
+#     ical_cal: ICalManager::Calendar
+#     author:
+#         groups: meta array
+
+settings:
+    managed_blog:
+        scope: system
 
 tasks:
     UpdateCalendars:
