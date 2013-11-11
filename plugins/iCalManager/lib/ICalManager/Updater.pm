@@ -6,6 +6,7 @@ use MT::Util qw{epoch2ts};
 use HTTP::Request;
 use LWP::UserAgent;
 use ICalManager::Utils qw{get_plugin_blog};
+use ICalManager::Combiner qw{combine_icals};
 
 # main
 # https://www.google.com/calendar/ical/shmuelfomberg%40gmail.com/public/basic.ics
@@ -14,6 +15,20 @@ use ICalManager::Utils qw{get_plugin_blog};
 # https://www.google.com/calendar/ical/r9lsqjpbu43pdv951uchi7qjjc%40group.calendar.google.com/private-f9c28b6e29dfc882b78c88e850f1765c/basic.ics
 # input2
 # https://www.google.com/calendar/ical/chknvtgjrtnv5a1dariuolatrk%40group.calendar.google.com/private-a3196475b9e469b6a3ff7288d2433976/basic.ics
+
+# Exmaple YAML data:
+# incoming:
+#   - last_update: datetime string, as got from the request header
+#     url: source ical position
+#     last_status: last request status
+#     id: numaric id inside this group
+#     filename: full path name
+# outgoing:
+#   - private_file: full path filename for full calendar
+#     public_file: full path filename contains only freebusy info
+#     private_token: token for private_file
+#     public_token: token for public_file
+#     id: numerical id inside this group
 
 my $ua = LWP::UserAgent->new( 
     agent => 'iCalendar Collector', 
@@ -34,17 +49,21 @@ sub update_all_cals {
             my $data = MT::Util::YAML::Load( $entry->text );
             my $update = 0;
             foreach my $cal (@{ $data->{incoming} }) {
-                my $was_updated = fetch_cal($mt, $plugin, $cal);
+                my $was_updated = fetch_cal($plugin, $entry, $cal);
                 $cal->{last_query} = epoch2ts(undef, time, 1);
                 next unless $was_updated;
                 $update = 1;
             }
+            if ($update) {
+                combine_icals($data->{incoming}, $data->{outgoing});
+            }
+            $entry->save();
         }
     }
 }
 
 sub fetch_cal {
-    my ($mt, $plugin, $cal) = @_;
+    my ($plugin, $entry, $cal) = @_;
     if ($cal->{last_update}) {
         my $req  = HTTP::Request->new( HEAD => $cal->{url} );
         # If-Modified-Since:Fri, 18 Oct 2013 04:40:51 GMT
@@ -59,8 +78,13 @@ sub fetch_cal {
     $cal->{last_status} = $res->code . "," . $res->message;
     return 0 unless $res->is_success;
     $cal->{last_update} = $res->headers->header('Date');
-    my $cal_file = $cal->cal_file($mt, $plugin);
-    open my $fh, ">", $cal_file or die "failed to open $cal_file";
+    if (not $cal->{filename}) {
+        require File::Spec;
+        $cal->{filename} = File::Spec->catdir(
+                $plugin->get_config_value('incoming_dir', 'system'),  
+                $entry->author_id, $entry->id, $cal->{id} . '.ics');
+    }
+    open my $fh, ">", $cal->{filename} or die "failed to open $cal_file";
     print $fh $res->content();
     close $fh;
     return 1;
