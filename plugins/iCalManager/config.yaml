@@ -16,6 +16,27 @@ settings:
 
 system_config_template: system_config.tmpl
 
+applications:
+    icalmanager:
+        handler: ICalManager::App
+        script: $icalmanager::ICalManager::App::script_name
+        methods:
+            login: $icalmanager::ICalManager::App::Registration::public_login
+            do_login: $icalmanager::ICalManager::App::Registration::do_login
+            logout: $icalmanager::ICalManager::App::Registration::logout
+            register: $icalmanager::ICalManager::App::Registration::register
+            do_register: $icalmanager::ICalManager::App::Registration::do_register
+            do_confirm: $icalmanager::ICalManager::App::Registration::do_confirm
+            resend_auth: $icalmanager::ICalManager::App::Registration::resend_auth
+            start_recover: $Core::MT::CMS::Tools::start_recover
+            recover: $Core::MT::CMS::Tools::recover_password
+            new_pw: $Core::MT::CMS::Tools::new_password
+            recover_lockout: $Core::MT::CMS::User::recover_lockout
+            edit_profile: $icalmanager::ICalManager::App::UserProfile::edit_profile
+            save_profile: $icalmanager::ICalManager::App::UserProfile::save_profile
+            userinfo: $icalmanager::ICalManager::App::Registration::userinfo
+            verify_session: $icalmanager::ICalManager::App::Registration::verify_session
+
 tasks:
     UpdateCalendars:
         label: Update all calendars

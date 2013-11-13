@@ -35,4 +35,8 @@ sub get_outgoing_ical_path {
     return File::Spec->catdir($blog->sitepath,  'icals', $entry->author_id, $entry->id);
 }
 
+sub create_rand_token {
+    
+}
+
 1;

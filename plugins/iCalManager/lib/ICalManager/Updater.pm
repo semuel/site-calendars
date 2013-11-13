@@ -29,6 +29,7 @@ use ICalManager::Combiner qw{combine_icals};
 #     private_token: token for private_file
 #     public_token: token for public_file
 #     id: numerical id inside this group
+# max_index: the current max calendar index
 
 my $ua = LWP::UserAgent->new( 
     agent => 'iCalendar Collector', 
@@ -57,6 +58,7 @@ sub update_all_cals {
             if ($update) {
                 combine_icals($data->{incoming}, $data->{outgoing});
             }
+            $entry->text(MT::Util::YAML::Dump($data));
             $entry->save();
         }
     }
