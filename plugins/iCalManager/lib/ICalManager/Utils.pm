@@ -29,7 +29,7 @@ sub get_incoming_ical_path {
 }
 
 sub get_outgoing_ical_path {
-    my ($entry, $ical, $opts) = @_;
+    my ($entry, undef, $opts) = @_;
     my $blog = get_plugin_blog($opts);
     require File::Spec;
     return File::Spec->catdir($blog->sitepath,  'icals', $entry->author_id, $entry->id);
