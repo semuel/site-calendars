@@ -1,0 +1,95 @@
+<__trans_section component="PluginDirectory">
+<mt:unless name="title"><mt:setvarblock name="title"><mt:var name="page_title"> - Movable Type Plugins And Themes Directory</mt:setvarblock></mt:unless>
+<mt:setvar name="entries_per_page" value="10">
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title><mt:var name="title"></title>
+  <link rel="shortcut icon" type="image/ico" href="<mt:supportdirectoryurl>theme_static/<mt:blogthemeid>/img/favicon.ico" />
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link href="http://fonts.googleapis.com/css?family=Noto+Serif:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="<mt:link template="<__trans phrase="styles">">" type="text/css" media="all" />
+  <script src="<mt:link template="<__trans phrase="javascript">">"></script>
+  <script src="<mt:staticwebpath encode_html="1">jquery/jquery.min.js"></script>
+  <mt:var name="HTML_HEAD">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="container col-group">
+        <div clsss="col col-7">
+          <h1><a href="<mt:blogurl>" class="beta">Movable Type Plugins And Themes Directory</a></h1>
+        </div>
+        <div clsss="col col-5">
+          <p id="signin"><a href="#">Sign In</a>&nbsp;&nbsp;&#124;&nbsp;&nbsp;<a href="#"><__trans phrase="Sign Up"></a></p>
+          <script type="text/javascript">
+          /* <![CDATA[ */
+          function mtUpdateSignInWidget(u) {
+              var separator = '&nbsp;&nbsp;&#124;&nbsp;&nbsp;';
+              var el = document.getElementById('signin');
+              var content = '';
+              if (!el) return;
+              if (u) {
+                  if (u && u.is_authenticated) {
+                      user = u;
+                      mtSaveUser();
+                  } else {
+                      // user really isn't logged in; so let's do this!
+                      return mtSignIn();
+                  }
+              } else {
+                  u = mtGetUser();
+              }
+              if (u && u.name) {
+                  var url;
+                  if (u.is_authenticated) {
+                      url = '<mt:CGIPath><mt:PDScript>?__mode=list_plugins&blog_id=<mt:BlogID>';
+                      url += '&static=' + encodeURIComponent( location.href );
+                  } else {
+                      url = null;
+                  }
+                  if (url)
+                    content += '<__trans phrase="You are signed in as <a href="[_1]">[_2]</a>" params="' + url + '%%' + u.name + '">';
+                  else
+                    content += '<__trans phrase="You are signed in as [_1]" params="' + u.name + '">';
+                  if (u.is_author)
+                      content += separator + '<a href="<mt:CGIPath><mt:PDScript>?__mode=edit_profile&blog_id=<mt:BlogID>&return_to=' + encodeURIComponent(document.URL) + '"><__trans phrase="Edit profile"></a>';
+                  content += separator + '<a href="javascript:void(0)" onclick="return mtSignOutOnClick()"><__trans phrase="Sign Out"></a>';
+              } else if (u && u.is_banned) {
+                  content = '<__trans phrase="You do not have permission to sign in.">';
+              } else {
+                  content = '<a href="javascript:void(0)" onclick="return mtSignInOnClick(\'signin\')"><__trans phrase="Sign In"></a>';
+                  content += separator + '<a href="<mt:CGIPath><mt:PDScript>?__mode=register&blog_id=<mt:BlogID>&return_to=' + encodeURIComponent(document.URL) + '"><__trans phrase="Sign Up"></a>';
+              }
+              el.innerHTML = content;
+          }
+          mtAttachEvent('usersignin', mtUpdateSignInWidget);
+          mtUpdateSignInWidget();
+          /* ]]> */
+          </script>
+        </div>
+      </div>
+    </header>
+    <nav role="navigation">
+      <div class="container col-group">
+        <ul id="nav-main" class="col col-6">
+          <li><a href="<mt:link template="<__trans phrase="Main Index">">" rel="home"><__trans phrase="Find Plugins and Themes"></a></li>
+          <li><a href="<mt:link template="<__trans phrase="Creators">">"><__trans phrase="Register your work!"></a></li>
+          <li><a href="http://plugins.movabletype.org/"><__trans phrase="(Old) Plugin Directory"></a></li>
+        </ul>
+<mt:unless name="hide_header_search">
+        <div class="col col-6">
+          <form class="form-search">
+            <input type="text" class="input-medium search-query" id="search-query">
+            <button id="search-action" class="btn"><__trans phrase="Search"></button>
+          </form>
+        </div>
+      </div>
+</mt:unless>
+    </nav>
+    <div class="container col-group">
+</__trans_section>

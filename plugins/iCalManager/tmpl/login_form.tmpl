@@ -1,0 +1,53 @@
+<mt:setvarblock name="page_title">Sign In</mt:setvarblock>
+
+<mt:include name="html_header.tmpl">
+
+<div class="col-group">
+  <div class="col col-12">
+    <h1>Sign In</h1>
+
+    <p>You need to sign in first before you can register a plugin and theme to the directory. If you do not have a directory account, <a href="<mt:CGIPath><mt:PDScript>?__mode=register&blog_id=<mt:BlogID>">click here</a> to create one.</p>
+
+    <section class="usersignin">
+<mt:if name="error">
+  <mt:app:statusmsg
+    id="generic-error"
+    class="error content-box attention-box"
+    can_close="0">
+    <mt:var name="error">
+  </mt:app:statusmsg>
+</mt:if>
+<mt:if name="message">
+  <mt:app:statusmsg
+    id="message"
+    class="info content-box attention-box"
+    can_close="0">
+    <mt:var name="message">
+  </mt:app:statusmsg>
+</mt:if>
+
+    <form class="form-horizontal" id="signin_form" action="<mt:var name="script_url">" method="post">
+      <input type="hidden" name="blog_id" value="<$mt:Var name="blog_id" escape="html"$>" />
+      <input type="hidden" name="return_to" value="<$mt:Var name="return_to" escape="html"$>" />
+      <input type="hidden" name="__mode" value="do_login" />
+      <div class="group">
+        <label class="control-label" for="UsreName">Username</label>
+        <div class="controls">
+          <input id="username" type="text" placeholder="Enter your login name" name="username" value="">
+        </div>
+      </div>
+      <div class="group">
+        <label class="control-label" for="Password">Password</label>
+        <div class="controls">
+          <input id="password" type="password" placeholder="Enter your login password" name="password" value="">
+        </div>
+      </div>
+      <p>
+        <button class="btn btn-primary" type="submit">Sign In</button>
+      </p>
+    </form>
+    </section>
+  </div>
+</div>
+
+<mt:include module="HTML Footer">

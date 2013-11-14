@@ -21,7 +21,10 @@ sub get_plugin {
 sub get_plugin_blog {
     my ($opts) = @_;
     my $plugin = get_plugin($opts);
-    return $plugin->get_config_value('managed_blog', 'system');
+    my $mt = $opts->{app} ||= MT->instance;
+    my $blog_id = $plugin->get_config_value('managed_blog', 'system');
+    my $blog = $mt->model('blog')->load($blog_id);
+    return $blog;
 }
 
 sub get_incoming_ical_path {

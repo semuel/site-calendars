@@ -36,6 +36,11 @@ applications:
             save_profile: $icalmanager::ICalManager::App::UserProfile::save_profile
             userinfo: $icalmanager::ICalManager::App::Registration::userinfo
             verify_session: $icalmanager::ICalManager::App::Registration::verify_session
+            list: $icalmanager::ICalManager::App::ManageCals::list
+            new_group: $icalmanager::ICalManager::App::ManageCals::new_group
+            delete_group: $icalmanager::ICalManager::App::ManageCals::delete_group
+            add_incoming: $icalmanager::ICalManager::App::ManageCals::add_incoming
+            remove_incoming: $icalmanager::ICalManager::App::ManageCals::remove_incoming
 
 tasks:
     UpdateCalendars:

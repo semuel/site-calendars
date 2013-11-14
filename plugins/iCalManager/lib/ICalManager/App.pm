@@ -25,6 +25,7 @@ sub init {
     $app->SUPER::init(@_);
     $app->{default_mode}         = 'login';
     $app->{plugin_template_path} = '';
+    $app->{component} = 'icalmanager';
     $app->plugin();
     return $app;
 }
