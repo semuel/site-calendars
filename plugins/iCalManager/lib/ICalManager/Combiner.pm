@@ -14,11 +14,11 @@ sub combine_icals {
     my @in_cals;
     foreach my $ical (@$incoming) {
         next unless -e $ical->{filename};
-        my $data = read_ical_file($ical->{filename})
+        my $data = read_ical_file($ical->{filename});
         push @in_cals, $data;
     }
 
-    my @inner_cals = grep { $_->{type} eq 'VCALENDAR' } map { @{ $_->{objects} } } @$in_cals;
+    my @inner_cals = grep { $_->{type} eq 'VCALENDAR' } map { @{ $_->{objects} } } @in_cals;
     my @objects = map { @{ $_->{objects} } } @inner_cals;
     my @time_objs = 
         sort { -1 * ( $a->{properties}{DTSTART}[0]{value} cmp $b->{properties}{DTSTART}[0]{value} ) } 
@@ -36,7 +36,7 @@ sub combine_icals {
         },
     );
 
-    foreach my $ical (@outgoing) {
+    foreach my $ical (@$outgoing) {
         if (my $filename = $ical->{private_file}) {
             my $new_cal = { 
                 %new_cal_props, 
@@ -72,7 +72,7 @@ sub privatize_cal_objs {
         my $new = {
             type => 'VFREEBUSY',
             properties => \%properties,
-        }
+        };
         push @out, $new;
     }
     return \@out;

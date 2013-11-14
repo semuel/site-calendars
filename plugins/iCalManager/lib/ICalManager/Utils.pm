@@ -13,7 +13,7 @@ sub get_plugin {
     if (not exists $opts->{app}) {
         $opts->{app} = MT->instance;
     }
-    my $mt = $opts{app};
+    my $mt = $opts->{app};
     my $plugin = $opts->{plugin} = $mt->component('icalmanager');
     return $plugin;
 }
@@ -35,8 +35,11 @@ sub get_outgoing_ical_path {
     return File::Spec->catdir($blog->sitepath,  'icals', $entry->author_id, $entry->id);
 }
 
+my @chars = ('a'..'z', 'A'..'Z', '0'..'9');
+
 sub create_rand_token {
-    
+    my $token = join '', map $chars[int(rand(scalar(@chars)))], 1..12;
+    return $token; 
 }
 
 1;

@@ -28,10 +28,10 @@ sub public_login {
             unless is_url($return_to);
     }
 
-    my $tmpl = $app->plugin->load_tmpl('login_form.tmpl');
+    my $tmpl = $app->plugin->load_tmpl('login_form.tmpl')
         or return $app->errtrans("No login form template defined");
     my $param = {
-        blog_id   => $blog_id,
+        blog_id   => $blog->id,
         return_to => $return_to,
     };
     my $cfg = $app->config;
@@ -155,7 +155,7 @@ sub do_login {
             "Login failed: permission denied for user '[_1]'", $name );
     }
     elsif ( MT::Auth::PENDING() == $result ) {
-
+        my $user = $app->user;
         my $return_to = commenter_loggedin( $app, $user, $blog_id );
         if ( !$return_to ) {
             return $app->load_tmpl(
@@ -328,6 +328,7 @@ sub register {
     my $app  = shift;
     my %opts = @_;
     my $q    = $app->param;
+    my $blog = $app->blog;
 
     my $param = {
         %opts,

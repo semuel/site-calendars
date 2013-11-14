@@ -86,7 +86,7 @@ sub fetch_cal {
                 $plugin->get_config_value('incoming_dir', 'system'),  
                 $entry->author_id, $entry->id, $cal->{id} . '.ics');
     }
-    open my $fh, ">", $cal->{filename} or die "failed to open $cal_file";
+    open my $fh, ">", $cal->{filename} or die "failed to open $cal->{filename}";
     print $fh $res->content();
     close $fh;
     return 1;

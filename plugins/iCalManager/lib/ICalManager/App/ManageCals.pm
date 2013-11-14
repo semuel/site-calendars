@@ -14,9 +14,9 @@ sub list {
     while (my $entry = $entries->()) {
         my $data = MT::Util::YAML::Load( $entry->text );
         my $rec = {
-            title => $entry->title();
-            incoming => $data->{incoming};
-            outgoing => $data->{outgoing};
+            title => $entry->title(),
+            incoming => $data->{incoming},
+            outgoing => $data->{outgoing},
         };
         push @cal_groups, $rec;
     }
