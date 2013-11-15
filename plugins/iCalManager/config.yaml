@@ -41,6 +41,7 @@ applications:
             delete_group: $icalmanager::ICalManager::App::ManageCals::delete_group
             add_incoming: $icalmanager::ICalManager::App::ManageCals::add_incoming
             remove_incoming: $icalmanager::ICalManager::App::ManageCals::remove_incoming
+            request_payment: $icalmanager::ICalManager::App::Registration::request_payment
 
 tasks:
     UpdateCalendars:

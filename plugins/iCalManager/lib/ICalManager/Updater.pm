@@ -8,6 +8,9 @@ use LWP::UserAgent;
 use ICalManager::Utils qw{get_plugin_blog};
 use ICalManager::Combiner qw{combine_icals};
 
+# iCal validetor
+# http://severinghaus.org/projects/icv/
+
 # main
 # https://www.google.com/calendar/ical/shmuelfomberg%40gmail.com/public/basic.ics
 

@@ -110,7 +110,7 @@ sub get_loggedin_user {
     my $app           = shift;
     my @options       = @_;
     my $blog_id       = $app->param('blog_id');
-    my %avail_options = map { ( $_ => 1 ) } 'http post';
+    my %avail_options = map { ( $_ => 1 ) } 'http post', 'approved';
     if ( my ($opt) = grep { not exists $avail_options{$_} } @options ) {
         die $plugin->translate( 'Illigal option in [_1]: [_2].',
             'get_loggedin_user', $opt );
@@ -145,6 +145,12 @@ sub get_loggedin_user {
 
     my ( $user, $sess_obj ) = $app->get_user($is_post)
         or return $failed_redirect->();
+
+    if ( grep { $_ eq 'approved' } @options ) {
+    	if ( $user->status != MT::Author::APPROVED() ) {
+    		$app->redirect( $app->app_uri( mode => 'request_payment' ) );
+    	}
+    }
 
     $app->{session} = $sess_obj;
 

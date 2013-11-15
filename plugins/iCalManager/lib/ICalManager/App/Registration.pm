@@ -28,7 +28,7 @@ sub public_login {
             unless is_url($return_to);
     }
 
-    my $tmpl = $app->plugin->load_tmpl('login_form.tmpl')
+    my $tmpl = $app->plugin->load_tmpl('login.tmpl')
         or return $app->errtrans("No login form template defined");
     my $param = {
         blog_id   => $blog->id,
@@ -148,7 +148,7 @@ sub do_login {
                 );
             }
 
-            return $app->redirect($return_to);
+            return $app->redirect($app->app_uri(mode => 'list'));
         }
         $error   = $app->translate("Permission denied.");
         $message = $app->translate(
