@@ -5,7 +5,11 @@ use MT;
 use MT::Util qw{epoch2ts};
 use HTTP::Request;
 use LWP::UserAgent;
-use ICalManager::Utils qw{get_plugin_blog};
+use ICalManager::Utils qw{
+    get_plugin_blog 
+    get_outgoing_ical_path
+    get_incoming_ical_path
+};
 use ICalManager::Combiner qw{combine_icals};
 
 # iCal validetor
@@ -43,13 +47,15 @@ my $ua = LWP::UserAgent->new(
 sub update_all_cals {
     my $mt      = MT->instance;
     my $plugin  = $mt->component('icalmanager');
-    my $blog_id = get_plugin_blog(plugin => $plugin);
+    my $blog = get_plugin_blog({plugin => $plugin});
     require MT::Util::YAML;
+    require File::Spec;
 
     my $authors_iter = $mt->model('author')->load_iter({ type => 1 });
     while (my $author = $authors_iter->()) {
-        my $entries = $mt->model('entry')->load_iter({ blog_id => $blog_id, author_id => $author->id });
+        my $entries = $mt->model('entry')->load_iter({ blog_id => $blog->id, author_id => $author->id });
         while (my $entry = $entries->()) {
+
             my $data = MT::Util::YAML::Load( $entry->text );
             my $update = 0;
             foreach my $cal (@{ $data->{incoming} }) {
@@ -57,6 +63,12 @@ sub update_all_cals {
                 $cal->{last_query} = epoch2ts(undef, time, 1);
                 next unless $was_updated;
                 $update = 1;
+            }
+            my $outgoing_path = get_outgoing_ical_path($entry, {plugin => $plugin});
+            foreach my $cal (@{ $data->{outgoing} }) {
+                my $id = $cal->{id};
+                $cal->{private_file} ||= File::Spec->catdir($outgoing_path, "pr_${id}_$cal->{private_token}.ics");
+                $cal->{public_file} ||= File::Spec->catdir($outgoing_path, "pu_${id}_$cal->{public_token}.ics");
             }
             if ($update) {
                 combine_icals($data->{incoming}, $data->{outgoing});
@@ -84,10 +96,9 @@ sub fetch_cal {
     return 0 unless $res->is_success;
     $cal->{last_update} = $res->headers->header('Date');
     if (not $cal->{filename}) {
+        my $dir = get_incoming_ical_path($entry, {plugin => $plugin});
         require File::Spec;
-        $cal->{filename} = File::Spec->catdir(
-                $plugin->get_config_value('incoming_dir', 'system'),  
-                $entry->author_id, $entry->id, $cal->{id} . '.ics');
+        $cal->{filename} = File::Spec->catdir( $dir, $cal->{id} . '.ics');
     }
     open my $fh, ">", $cal->{filename} or die "failed to open $cal->{filename}";
     print $fh $res->content();

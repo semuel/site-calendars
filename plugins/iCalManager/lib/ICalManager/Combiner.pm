@@ -6,6 +6,7 @@ use Text::vFile::asData;
 my $vFileParser = Text::vFile::asData->new();
 
 require Exporter;
+our @ISA = qw(Exporter);
 our @EXPORT = qw{ combine_icals };
 
 sub combine_icals {
@@ -31,7 +32,7 @@ sub combine_icals {
     my %new_cal_props = (
         type => 'VCALENDAR',
         properties => {  
-            PRODID => [{ value => '-//Shmuel Fomberg//iCal aggertor//EN' }],
+            PRODID => [{ value => '-//Shmuel Fomberg//iCal Aggregator//EN' }],
             VERSION => [{ value => '2.0' }],
         },
     );

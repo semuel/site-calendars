@@ -3,7 +3,12 @@ use strict;
 use warnings;
 
 require Exporter;
-our @EXPORT = qw{get_plugin_blog};
+our @ISA = qw(Exporter);
+our @EXPORT = qw{
+    get_plugin_blog 
+    get_outgoing_ical_path
+    get_incoming_ical_path
+};
 
 sub get_plugin {
     my ($opts) = @_;
@@ -28,14 +33,30 @@ sub get_plugin_blog {
 }
 
 sub get_incoming_ical_path {
-
+    my ($entry, $opts) = @_;
+    my $plugin = get_plugin($opts);
+    my $blog = get_plugin_blog($opts);
+    require File::Spec;
+    my $dir = File::Spec->catdir(
+                $plugin->get_config_value('incoming_dir', 'system'),  
+                $entry->author_id, $entry->id);
+    if (not -e $dir) {
+        require File::Path;
+        File::Path::mkpath($dir);
+    }
+    return $dir;
 }
 
 sub get_outgoing_ical_path {
-    my ($entry, undef, $opts) = @_;
+    my ($entry, $opts) = @_;
     my $blog = get_plugin_blog($opts);
     require File::Spec;
-    return File::Spec->catdir($blog->sitepath,  'icals', $entry->author_id, $entry->id);
+    my $dir = File::Spec->catdir($blog->site_path,  'icals', $entry->author_id, $entry->id);
+    if (not -e $dir) {
+        require File::Path;
+        File::Path::mkpath($dir);
+    }
+    return $dir;
 }
 
 my @chars = ('a'..'z', 'A'..'Z', '0'..'9');

@@ -41,7 +41,7 @@ sub new_group {
     $entry->title( $name );
     my $public_token = ICalManager::Utils::create_rand_token();
     my $private_token = ICalManager::Utils::create_rand_token();
-    my $path = ICalManager::Utils::get_outgoing_ical_path($entry, undef, { app=>$app });
+    my $path = ICalManager::Utils::get_outgoing_ical_path($entry, { app=>$app });
     require File::Spec;
     my $out_cal = {
         private_token => $private_token,
