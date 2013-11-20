@@ -23,6 +23,9 @@ use ICalManager::Combiner qw{combine_icals};
 # input2
 # https://www.google.com/calendar/ical/chknvtgjrtnv5a1dariuolatrk%40group.calendar.google.com/private-a3196475b9e469b6a3ff7288d2433976/basic.ics
 
+# http://www.shmuelfomberg.com/icals/icals/1/101/pr_4_eDWY2ZbBWEhC.ics
+# http://www.shmuelfomberg.com/icals/icals/1/101/pu_4_AL6haxQ7x1hw.ics
+
 # Exmaple YAML data:
 # incoming:
 #   - last_update: datetime string, as got from the request header
@@ -53,7 +56,11 @@ sub update_all_cals {
 
     my $authors_iter = $mt->model('author')->load_iter({ type => 1 });
     while (my $author = $authors_iter->()) {
-        my $entries = $mt->model('entry')->load_iter({ blog_id => $blog->id, author_id => $author->id });
+        my $entries = $mt->model('entry')->load_iter({ 
+            blog_id => $blog->id, 
+            author_id => $author->id,
+            status => 2,
+            });
         while (my $entry = $entries->()) {
 
             my $data = MT::Util::YAML::Load( $entry->text );
@@ -71,7 +78,7 @@ sub update_all_cals {
                 $cal->{public_file} ||= File::Spec->catdir($outgoing_path, "pu_${id}_$cal->{public_token}.ics");
             }
             if ($update) {
-                combine_icals($data->{incoming}, $data->{outgoing});
+                combine_icals($entry->title, $data->{incoming}, $data->{outgoing});
             }
             $entry->text(MT::Util::YAML::Dump($data));
             $entry->save();
@@ -81,20 +88,21 @@ sub update_all_cals {
 
 sub fetch_cal {
     my ($plugin, $entry, $cal) = @_;
+    my $url = $cal->{url};
+    $url =~ s/^webcal/https/;
+
+    my $req  = HTTP::Request->new( GET => $url );
     if ($cal->{last_update}) {
-        my $req  = HTTP::Request->new( HEAD => $cal->{url} );
         # If-Modified-Since:Fri, 18 Oct 2013 04:40:51 GMT
         # Cache-Control:max-age=0
         $req->headers->header('If-Modified-Since' => $cal->{last_update});
-        my $res = $ua->request($req);
-        return 0 if $res->code == 304;
     }
-
-    my $req  = HTTP::Request->new( GET => $cal->{url} );
     my $res = $ua->request($req);
     $cal->{last_status} = $res->code . "," . $res->message;
     return 0 unless $res->is_success;
+    return 0 if $res->code == 304;
     $cal->{last_update} = $res->headers->header('Date');
+
     if (not $cal->{filename}) {
         my $dir = get_incoming_ical_path($entry, {plugin => $plugin});
         require File::Spec;

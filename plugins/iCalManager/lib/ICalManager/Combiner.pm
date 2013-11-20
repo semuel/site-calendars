@@ -10,11 +10,11 @@ our @ISA = qw(Exporter);
 our @EXPORT = qw{ combine_icals };
 
 sub combine_icals {
-    my ($incoming, $outgoing) = @_;
+    my ($cal_name, $incoming, $outgoing) = @_;
 
     my @in_cals;
     foreach my $ical (@$incoming) {
-        next unless -e $ical->{filename};
+        next unless defined $ical->{filename} and -e $ical->{filename};
         my $data = read_ical_file($ical->{filename});
         push @in_cals, $data;
     }
@@ -34,6 +34,8 @@ sub combine_icals {
         properties => {  
             PRODID => [{ value => '-//Shmuel Fomberg//iCal Aggregator//EN' }],
             VERSION => [{ value => '2.0' }],
+            CALSCALE => [{ value => 'GREGORIAN' }],
+            'X-WR-CALNAME' => [{ value => $cal_name }],
         },
     );
 
